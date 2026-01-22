@@ -9,3 +9,12 @@ tsconfig.tsbuildinfo
 private/
 .replit
 replit.nix
+# 自己补充添加的内容
+.trash/            # Obsidian 回收站
+*.swp              # 编辑器临时交换文件
+.env               # 可能包含密钥的环境变量文件
+.cache/
+.parcel-cache/     # 构建工具缓存目录
+Thumbs.db          # Windows 缩略图缓存
+desktop.ini        # Windows 文件夹配置
+.vscode/           # 编辑器配置（如果使用 VS Code）
