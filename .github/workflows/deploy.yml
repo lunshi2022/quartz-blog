@@ -1,0 +1,46 @@
+name: Deploy Quartz Site
+
+on:
+  push:
+    branches: [ main ] # 当代码推送到 main 分支时触发
+    paths:
+      - 'content/**'   # 只有 content 目录下的笔记变更才触发，提高效率
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest # 使用 Linux 环境构建，能完美规避你之前遇到的 Windows 原生模块问题
+    permissions:
+      contents: write
+    steps:
+      # 1. 拉取你的 Quartz 源码和笔记
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 获取所有 Git 历史，这对某些插件（如基于Git的页面日期）是必要的
+
+      # 2. 设置 Node.js 环境
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # 使用稳定的 Node.js 20 LTS 版本
+
+      # 3. 安装依赖并构建 Quartz 静态网站
+      - name: Install and Build
+        run: |
+          npm ci          # 使用与 package-lock.json 一致的依赖安装，更稳定
+          npx quartz build # 执行构建，生成 public 文件夹
+
+      # 4. 使用 SSH 密钥部署到你的专属博客仓库
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          # 使用你在仓库 Secrets 中配置的 SSH 私钥
+          deploy_key: ${{ secrets.QUARTZ_DEPLOY_KEY }}
+          # 🔴 这是唯一需要你修改的地方：改成你的博客仓库，例如 `你的用户名/你的用户名.github.io`
+          external_repository: lunshi2022/lunshi2022.github.io
+          # 对于 <用户名>.github.io 这类仓库，通常发布到 main 分支
+          publish_branch: main
+          # 发布 Quartz 生成的静态文件目录
+          publish_dir: ./public
+          # 保留目标仓库的提交历史
+          force_orphan: false
