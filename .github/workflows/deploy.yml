@@ -14,13 +14,13 @@ jobs:
     steps:
       # 1. 拉取你的 Quartz 源码和笔记
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0 # 获取所有 Git 历史，这对某些插件（如基于Git的页面日期）是必要的
 
       # 2. 设置 Node.js 环境
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '22' # 使用稳定的 Node.js 22 LTS 版本
 
@@ -32,7 +32,7 @@ jobs:
 
       # 4. 使用 SSH 密钥部署到你的专属博客仓库
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           # 使用你在仓库 Secrets 中配置的 SSH 私钥
           deploy_key: ${{ secrets.QUARTZ_DEPLOY_KEY }}
